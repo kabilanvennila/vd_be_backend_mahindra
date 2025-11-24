@@ -1,0 +1,11 @@
+Django==5.2
+djangorestframework
+PyJWT
+python-dotenv
+pydantic
+pydantic[email]
+gunicorn
+psycopg2-binary
+whitenoise
+reportlab
+openai-whisper
