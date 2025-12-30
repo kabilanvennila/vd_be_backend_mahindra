@@ -10,10 +10,12 @@ class TestSerializer(serializers.ModelSerializer):
         fields = ['id','project', 'status', 'isReviewed', 'createdAt', 'updatedAt']
 
 class TestSpecValueSerializer(serializers.ModelSerializer):
-    spec = SpecValueSerializer()
+    test = TestSerializer(read_only=True)
+    spec = SpecValueSerializer(read_only=True)
+    
     class Meta:
         model = TestSpecValue
-        fields = ['test', 'spec', 'isTestingParam']
+        fields = ['id', 'test', 'spec', 'isTestingParam', 'createdAt', 'updatedAt']
 
 class TestParticipantSerializer(serializers.ModelSerializer):
     class Meta:
@@ -47,14 +49,6 @@ class ReportSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Report
-        fields = '__all__'
-
-class TestSpecValueSerializer(serializers.ModelSerializer):
-    test = TestSerializer(read_only=True)
-    spec_value = SpecValueSerializer(read_only=True)
-
-    class Meta:
-        model = TestSpecValue
         fields = '__all__'
 
 class SessionSerializer(serializers.ModelSerializer):
