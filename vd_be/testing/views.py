@@ -49,20 +49,20 @@ def get_project_tests_view(request, project_id):
     test_participants_dict = {}
     
     for spec_value in test_spec_values_data:
-        test_id = spec_value['test']
+        test_id = spec_value['test']['id']
         if test_id not in test_spec_values_dict:
             test_spec_values_dict[test_id] = []
         test_spec_values_dict[test_id].append(spec_value)
     
     for participant in test_participants_data:
-        test_id = participant['test']
+        test_id = spec_value['test']['id']
         if test_id not in test_participants_dict:
             test_participants_dict[test_id] = []
         test_participants_dict[test_id].append(participant)
     
     # Append the relevant test_spec_values to each test in tests_data
     for test in tests_data:
-        test_id = test['id']
+        test_id = spec_value['test']['id']
         test['spec_values'] = test_spec_values_dict.get(test_id, [])
         test['participants'] = test_participants_dict.get(test_id, [])
 
