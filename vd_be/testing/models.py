@@ -1,11 +1,12 @@
 from django.db import models
 
-from organisation.models import FeedbackQuestion, Project, SpecValue, User, Vehicle
+from organisation.models import Organisation, Project, SpecValue, User, Vehicle
 
 class Test(models.Model):
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     TEST_STATUS_CHOICES = [
         ('pending', 'Pending'),
+        ('yet_to_test', 'Yet to test'),
         ('in_progress', 'In Progress'),
         ('completed', 'Completed'),
         ('failed', 'Failed'),
@@ -106,7 +107,33 @@ class TestGPSCoordinate(models.Model):
     def delete(cls, tgc_id):
         cls.objects.filter(id=tgc_id).delete()
 
+class FeedbackQuestion(models.Model):
+    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    question = models.TextField()
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
 
+    def __str__(self):
+        return f"Project {self.project} - rating {self.question}"
+
+class TestingBenchmarkParams(models.Model):
+    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
+    CATEGORY_CHOICES = [
+        ('ride', 'Ride'),
+        ('handling', 'Handling'),
+        ('Noise', 'noise'),
+        ('Steering', 'steering')
+    ]
+    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
+    question = models.ForeignKey(FeedbackQuestion, on_delete=models.CASCADE)
+    weightage = models.IntegerField()
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"category {self.category} - question {self.question}"
+        
 class FeedbackAnswer(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     question = models.ForeignKey(FeedbackQuestion, on_delete=models.CASCADE)
@@ -115,25 +142,26 @@ class FeedbackAnswer(models.Model):
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
 
-    @classmethod
-    def create(cls, feedback, question, rating):
-        return cls.objects.create(feedback=feedback, question=question, rating=rating)
+    def __str__(self):
+        return f"Comment {self.comment} - rating {self.rating}"
 
-    @classmethod
-    def get_by_id(cls, fa_id):
-        return cls.objects.get(id=fa_id)
+class CategoryScore(models.Model):
+    test = models.ForeignKey(Test, on_delete=models.CASCADE, related_name='category_scores')
+    category = models.CharField(max_length=100)
+    score = models.FloatField()  # Final calculated score for this category
+    createdAt = models.DateTimeField(auto_now_add=True)
+    updatedAt = models.DateTimeField(auto_now=True)
 
-    @classmethod
-    def update(cls, fa_id, **kwargs):
-        cls.objects.filter(id=fa_id).update(**kwargs)
+    class Meta:
+        unique_together = ['test', 'category']  # One score per category per test
 
-    @classmethod
-    def delete(cls, fa_id):
-        cls.objects.filter(id=fa_id).delete()
+    def __str__(self):
+        return f"Test {self.test.id} - {self.category}: {self.score}"
 
 class Report(models.Model):
     test = models.ForeignKey(Test, on_delete=models.CASCADE)
     final_rating = models.IntegerField()
+    pdf_file = models.FileField(upload_to='reports/', null=True, blank=True)
     createdAt = models.DateTimeField(auto_now_add=True)
     updatedAt = models.DateTimeField(auto_now=True)
 

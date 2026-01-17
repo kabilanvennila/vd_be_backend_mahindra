@@ -242,34 +242,39 @@ class VehicleSpec(models.Model):
     def delete(cls, vs_id):
         cls.objects.filter(id=vs_id).delete()
 
-class FeedbackQuestion(models.Model):
-    organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
-    CATEGORY_CHOICES = [
-        ('tyre', 'Tyre'),
-        ('suspension', 'Suspension'),
-        ('brakes', 'Brakes'),
-        ('steering', 'Steering'),
-        ('engine', 'Engine'),
-        ('other', 'Other'),
-    ]
-    category = models.CharField(max_length=100, choices=CATEGORY_CHOICES, default='other')
-    question = models.TextField()
-    weightage = models.IntegerField()
-    createdAt = models.DateTimeField(auto_now_add=True)
-    updatedAt = models.DateTimeField(auto_now=True)
+# class TestingBenchmarkParams(models.Model):
+#     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
+#     CATEGORY_CHOICES = [
+#         ('ride', 'Ride'),
+#         ('handling', 'Handling'),
+#         ('Noise', 'noise'),
+#         ('Steering', 'steering')
+#     ]
+#     category = models.CharField(max_length=100, choices=CATEGORY_CHOICES)
+#     question = models.ForeignKey(FeedbackQuestion, on_delete=models.CASCADE)
+#     weightage = models.IntegerField()
+#     createdAt = models.DateTimeField(auto_now_add=True)
+#     updatedAt = models.DateTimeField(auto_now=True)
 
-    @classmethod
-    def create(cls, form, question, weightage):
-        return cls.objects.create(form=form, question=question, weightage=weightage)
+# class FeedbackQuestion(models.Model):
+#     organisation = models.ForeignKey(Organisation, on_delete=models.CASCADE)
+#     project = models.ForeignKey(Project, on_delete=models.CASCADE)
+#     question = models.TextField()
+#     createdAt = models.DateTimeField(auto_now_add=True)
+#     updatedAt = models.DateTimeField(auto_now=True)
 
-    @classmethod
-    def get_by_id(cls, fq_id):
-        return cls.objects.get(id=fq_id)
+#     @classmethod
+#     def create(cls, form, question, weightage):
+#         return cls.objects.create(form=form, question=question, weightage=weightage)
 
-    @classmethod
-    def update(cls, fq_id, **kwargs):
-        cls.objects.filter(id=fq_id).update(**kwargs)
+#     @classmethod
+#     def get_by_id(cls, fq_id):
+#         return cls.objects.get(id=fq_id)
 
-    @classmethod
-    def delete(cls, fq_id):
-        cls.objects.filter(id=fq_id).delete()
+#     @classmethod
+#     def update(cls, fq_id, **kwargs):
+#         cls.objects.filter(id=fq_id).update(**kwargs)
+
+#     @classmethod
+#     def delete(cls, fq_id):
+#         cls.objects.filter(id=fq_id).delete()

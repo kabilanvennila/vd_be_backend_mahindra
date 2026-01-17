@@ -7,47 +7,47 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['username', 'full_name', 'email', 'phone_number', 'address', 'height', 'weight', 'gender', 'date_of_birth', 'profile_picture_url', 'organisation']
+        fields = '__all__'
 
 class UserLiteSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'full_name']
+        fields = '__all__'
 
 class VehicleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Vehicle
-        fields = ['id', 'name', 'description', 'image_url', 'body_number', 'manufacturer', 'year']
+        fields = '__all__'
 
 class ProjectSerializer(serializers.ModelSerializer):
     vehicle = VehicleSerializer()
 
     class Meta:
         model = Project
-        fields = ['id', 'name', 'code', 'parent_code', 'status', 'stage', 'vehicle']
+        fields = '__all__'
         
 class ProjectEmployeeSerializer(serializers.ModelSerializer):
     user = UserLiteSerializer()
     class Meta:
         model = ProjectEmployee
-        fields = ['user', 'role']
+        fields = '__all__'
 
 class SpecSerializer(serializers.ModelSerializer):
     class Meta:
         model = Spec
-        fields = ['category', 'title']
+        fields = '__all__'
         
 class SpecValueSerializer(serializers.ModelSerializer):
     spec = SpecSerializer()
     class Meta:
         model = SpecValue
-        fields = ['spec', 'id', 'value', 'value_type']
+        fields = '__all__'
 
 class VehicleSpecSerializer(serializers.ModelSerializer):
     spec = SpecValueSerializer()
     class Meta:
         model = VehicleSpec
-        fields = ['spec', 'default']
+        fields = '__all__'
 
 class OrganisationSerializer(serializers.ModelSerializer):
     class Meta:

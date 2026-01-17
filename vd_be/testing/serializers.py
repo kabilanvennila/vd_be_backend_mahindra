@@ -1,13 +1,12 @@
-from organisation.models import FeedbackQuestion
 from rest_framework import serializers
 from organisation.serializers import SpecValueSerializer,OrganisationSerializer
-from testing.models import Feedback, FeedbackAnswer, Report, Session, Test, TestGPSCoordinate, TestParticipant, TestSpecValue
+from testing.models import Feedback, FeedbackAnswer, FeedbackQuestion, Report, Session, Test, TestGPSCoordinate, TestParticipant, TestSpecValue
 
 
 class TestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Test
-        fields = ['id','project', 'status', 'isReviewed', 'createdAt', 'updatedAt']
+        fields = '__all__'
 
 class TestSpecValueSerializer(serializers.ModelSerializer):
     test = TestSerializer(read_only=True)
@@ -15,12 +14,12 @@ class TestSpecValueSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = TestSpecValue
-        fields = ['id', 'test', 'spec', 'isTestingParam', 'createdAt', 'updatedAt']
+        fields = '__all__'
 
 class TestParticipantSerializer(serializers.ModelSerializer):
     class Meta:
         model = TestParticipant
-        fields = ['test','user', 'role']
+        fields = '__all__'
 
 class TestGPSCoordinateSerializer(serializers.ModelSerializer):
     test = TestSerializer(read_only=True)
@@ -44,6 +43,12 @@ class FeedbackAnswerSerializer(serializers.ModelSerializer):
         model = FeedbackAnswer
         fields = '__all__'
 
+class FeedbackAnswerCreateSerializer(serializers.ModelSerializer):
+    """Serializer for creating FeedbackAnswer - accepts IDs instead of nested objects"""
+    class Meta:
+        model = FeedbackAnswer
+        fields = ['test', 'question', 'rating', 'comment']
+
 class ReportSerializer(serializers.ModelSerializer):
     test = TestSerializer(read_only=True)
 
@@ -54,9 +59,22 @@ class ReportSerializer(serializers.ModelSerializer):
 class SessionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Session
-        fields = ['id', 'test', 'driver_id', 'vehicle_id', 'start_time']
+        fields = '__all__'
 
 class FeedbackSerializer(serializers.ModelSerializer):
+    audio_file_url = serializers.SerializerMethodField()
+    session = SessionSerializer(read_only=True)
+    
     class Meta:
         model = Feedback
-        fields = ['id', 'session', 'audio_file', 'latitude', 'longitude', 'timestamp', 'transcription_text']
+        fields = ['id', 'session', 'audio_file', 'audio_file_url', 'transcription_text', 
+                  'latitude', 'longitude', 'timestamp']
+    
+    def get_audio_file_url(self, obj):
+        """Get full URL for the audio file"""
+        if obj.audio_file:
+            request = self.context.get('request')
+            if request:
+                return request.build_absolute_uri(obj.audio_file.url)
+            return obj.audio_file.url
+        return None

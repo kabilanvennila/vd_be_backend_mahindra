@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (
-    Organisation, User, Project, ProjectEmployee, Vehicle, Spec, SpecValue, VehicleSpec, FeedbackQuestion
+    Organisation, User, Project, ProjectEmployee, Vehicle, Spec, SpecValue, VehicleSpec
 )
 
 admin.site.register(Organisation)
@@ -11,4 +11,4 @@ admin.site.register(Vehicle)
 admin.site.register(Spec)
 admin.site.register(SpecValue)
 admin.site.register(VehicleSpec)
-admin.site.register(FeedbackQuestion)
+# admin.site.register(FeedbackQuestion)
